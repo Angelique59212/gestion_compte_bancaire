@@ -51,4 +51,16 @@ class BankAccountController extends AbstractController
         return new JsonResponse(['message' => "bank not found"], Response::HTTP_BAD_REQUEST);
     }
 
+    #[Route('/api/bankAccount/{id}', name: 'app_bankAccount_delete', methods: ['DELETE'])]
+    public function deleteBankAccount(int $id, BankAccountRepository $repository, EntityManagerInterface $em): JsonResponse
+    {
+        $bank = $repository->find($id);
+        if ($bank) {
+            $em->remove($bank);
+            $em->flush();
+
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        }
+        return new JsonResponse(['message' =>'bank not found'], Response::HTTP_NOT_FOUND);
+    }
 }
