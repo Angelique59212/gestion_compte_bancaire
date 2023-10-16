@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\BankAccount;
 use App\Repository\BankAccountRepository;
+use App\Repository\CustomerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -30,6 +34,21 @@ class BankAccountController extends AbstractController
         return new JsonResponse(['message'=>'bank not found'], Response::HTTP_NOT_FOUND);
     }
 
+    #[Route('/api/bankAccount/add', name: 'app_bankAccount_add', methods: ['POST'])]
+    public function addBankAccount(CustomerRepository $repository,Request $request, EntityManagerInterface $em, SerializerInterface $serializer):JsonResponse
+    {
+        $bank = $serializer->deserialize($request->getContent(), BankAccount::class, 'json');
+        $content = $request->toArray();
+        $customerId = $content['idCustomer'] ?? -1;
+        $customer = $repository->find($customerId);
+        if ($customer) {
+            $bank->setCustomer($customer);
 
+            $em->persist($bank);
+            $em->flush();
+            return new JsonResponse($serializer->serialize($bank, 'json', ['groups' => 'getBanks']), Response::HTTP_CREATED, [], true);
+        }
+        return new JsonResponse(['message' => "bank not found"], Response::HTTP_BAD_REQUEST);
+    }
 
 }
