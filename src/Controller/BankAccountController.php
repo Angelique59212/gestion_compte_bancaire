@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class BankAccountController extends AbstractController
@@ -62,5 +63,14 @@ class BankAccountController extends AbstractController
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
         return new JsonResponse(['message' =>'bank not found'], Response::HTTP_NOT_FOUND);
+    }
+
+    #[Route('/api/bankAccount/{id}', name: 'app_bankAccount_update', methods: ['PUT'])]
+    public function updateBank(Request $request, SerializerInterface $serializer, BankAccount $currentBank, EntityManagerInterface $em): JsonResponse
+    {
+        $updateBank = $serializer->deserialize($request->getContent(), BankAccount::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE=>$currentBank]);
+        $em->persist($updateBank);
+        $em->flush();
+        return new JsonResponse(['message'=>'bank update'], Response::HTTP_OK);
     }
 }

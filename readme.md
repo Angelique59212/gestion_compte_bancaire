@@ -14,14 +14,14 @@ De plus, des fonctionnalités avancées telles que des virements, les relevés d
 - Recherche de compte par le nom du titulaire.
 - Implémentation de fonctionnalités de gestion des opérations courantes telles que les dépôts et les retraits.
 - CRUD classique des entités
-- Ajout du montant épargner ( compte épargne )
+- Ajout du montant épargné (compte épargne)
 
 
 **Exigences techniques:**
 
-Utilisation du framework Symfony pour le développement de l'API.
+_Utilisation du framework Symfony pour le développement de l'API._
 Utilisation d'une base de données pour stocker les détails des comptes bancaires et des transactions.
-Utilisation de fixtures
+_Utilisation de fixtures_
 Utilisation de bonnes pratiques de codage, y compris la documentation appropriée du code.
 Utilisation de migrations Doctrine pour la gestion de la base de données.
 
