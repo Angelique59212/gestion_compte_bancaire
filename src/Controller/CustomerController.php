@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomerController extends AbstractController
@@ -38,6 +40,33 @@ class CustomerController extends AbstractController
     #[Route('/api/customer/add', name: 'app_customer_add', methods: ['POST'])]
     public function addCustomer(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
     {
+        $customer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
+        $em->persist($customer);
+        $em->flush();
 
+        $jsonCustomer = $serializer->serialize($customer, 'json');
+        return new JsonResponse($jsonCustomer, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/api/customer/{id}', name: 'app_customer_delete', methods: ['DELETE'])]
+    public function deleteCustomer(int $id, CustomerRepository $repository, EntityManagerInterface $em):JsonResponse
+    {
+        $customer = $repository->find($id);
+        if ($customer) {
+            $em->remove($customer);
+            $em->flush();
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        }
+        return new JsonResponse(['message'=>'customer not found'], Response::HTTP_NOT_FOUND);
+    }
+
+    #[Route('/api/customer/{id}', name: 'app_customer_update', methods: ['PUT'])]
+    public function updateCustomer(Request $request, SerializerInterface $serializer, Customer $currentCustomer, EntityManagerInterface $em): JsonResponse
+    {
+        $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE=>$currentCustomer]);
+
+        $em->persist($updateCustomer);
+        $em->flush();
+        return new JsonResponse(['message' =>'customer update'], Response::HTTP_OK);
     }
 }
