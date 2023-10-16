@@ -13,7 +13,7 @@ De plus, des fonctionnalités avancées telles que des virements, les relevés d
 - Réalisation de transactions entre comptes bancaires (virements)
 - Recherche de compte par le nom du titulaire.
 - Implémentation de fonctionnalités de gestion des opérations courantes telles que les dépôts et les retraits.
-- CRUD classique des éntitées
+- CRUD classique des entités
 - Ajout du montant épargner ( compte épargne )
 
 
