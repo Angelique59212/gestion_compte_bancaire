@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\BankAccountRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BankAccountRepository::class)]
 class BankAccount
@@ -11,22 +12,33 @@ class BankAccount
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getCustomers', 'getBanks'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(['getCustomers', 'getBanks'])]
     private ?string $accountNumber = null;
 
     #[ORM\Column(length: 8)]
+    #[Groups(['getCustomers', 'getBanks'])]
     private ?string $accountType = null;
 
     #[ORM\Column]
+    #[Groups(['getCustomers', 'getBanks'])]
     private ?int $currentAccountBalance = null;
 
     #[ORM\Column]
+    #[Groups(['getCustomers', 'getBanks'])]
     private ?bool $overdraft = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['getCustomers', 'getBanks'])]
     private ?int $interestRate = null;
+
+    #[ORM\ManyToOne(inversedBy: 'bankAccounts')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['getBanks'])]
+    private ?Customer $customer = null;
 
     public function getInterestRate(): ?int
     {
@@ -39,10 +51,6 @@ class BankAccount
 
         return $this;
     }
-
-    #[ORM\ManyToOne(inversedBy: 'bankAccounts')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Customer $customer = null;
 
     public function getId(): ?int
     {
