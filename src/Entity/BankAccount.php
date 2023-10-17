@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BankAccountRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -39,6 +41,14 @@ class BankAccount
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['getBanks'])]
     private ?Customer $customer = null;
+
+    #[ORM\OneToMany(mappedBy: 'banckAccount', targetEntity: Transaction::class)]
+    private Collection $transactions;
+
+    public function __construct()
+    {
+        $this->transactions = new ArrayCollection();
+    }
 
     public function getInterestRate(): ?int
     {
@@ -113,6 +123,36 @@ class BankAccount
     public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Transaction>
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): static
+    {
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions->add($transaction);
+            $transaction->setBanckAccount($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransaction(Transaction $transaction): static
+    {
+        if ($this->transactions->removeElement($transaction)) {
+            // set the owning side to null (unless already changed)
+            if ($transaction->getBanckAccount() === $this) {
+                $transaction->setBanckAccount(null);
+            }
+        }
 
         return $this;
     }
