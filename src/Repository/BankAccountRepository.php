@@ -21,6 +21,20 @@ class BankAccountRepository extends ServiceEntityRepository
         parent::__construct($registry, BankAccount::class);
     }
 
+    public function findName(string $name): array
+    {
+        $em = $this->getEntityManager();
+        $query= $em->createQuery(
+            'SELECT b
+                FROM App\Entity\BankAccount b
+                INNER JOIN b.customer c
+                WHERE c.name = :name
+                ORDER BY c.name ASC'
+
+        )->setParameter('name', $name);
+        return $query->getResult();
+    }
+
 //    /**
 //     * @return BankAccount[] Returns an array of BankAccount objects
 //     */

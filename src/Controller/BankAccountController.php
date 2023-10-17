@@ -73,4 +73,13 @@ class BankAccountController extends AbstractController
         $em->flush();
         return new JsonResponse(['message'=>'bank update'], Response::HTTP_OK);
     }
+
+    #[Route('api/bankAccount/searchCustomer/{name}', name: 'app_book_searchCustomer', methods: ['GET'])]
+    public function searchBankAccount(string $name, BankAccountRepository $repository, SerializerInterface $serializer):JsonResponse
+    {
+        $names = $repository->findName($name);
+        $jsonNames = $serializer->serialize($names, 'json', ['groups' => 'getCustomers']);
+
+        return new JsonResponse($jsonNames, Response::HTTP_OK, [], true);
+    }
 }

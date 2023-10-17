@@ -6,14 +6,14 @@ De plus, des fonctionnalités avancées telles que des virements, les relevés d
 
 **Fonctionnalités requises:**
 
-- Création d'un compte bancaire avec les détails du titulaire et le solde initial.
-- Consultation des détails d'un compte bancaire spécifique.
-- Mise à jour des détails d'un compte bancaire (par exemple, changement de solde, mise à jour des informations du titulaire).
-- Suppression d'un compte bancaire spécifique.
+- _Création d'un compte bancaire avec les détails du titulaire et le solde initial._
+- _Consultation des détails d'un compte bancaire spécifique_
+- _Mise à jour des détails d'un compte bancaire (par exemple, changement de solde, mise à jour des informations du titulaire)._
+- _Suppression d'un compte bancaire spécifique._
 - Réalisation de transactions entre comptes bancaires (virements)
-- Recherche de compte par le nom du titulaire.
+- _Recherche de compte par le nom du titulaire._
 - Implémentation de fonctionnalités de gestion des opérations courantes telles que les dépôts et les retraits.
-- CRUD classique des entités
+- _CRUD classique des entités_
 - Ajout du montant épargné (compte épargne)
 
 
@@ -23,7 +23,7 @@ _Utilisation du framework Symfony pour le développement de l'API._
 Utilisation d'une base de données pour stocker les détails des comptes bancaires et des transactions.
 _Utilisation de fixtures_
 Utilisation de bonnes pratiques de codage, y compris la documentation appropriée du code.
-Utilisation de migrations Doctrine pour la gestion de la base de données.
+_Utilisation de migrations Doctrine pour la gestion de la base de données._
 
 
 **Données minimale :**
