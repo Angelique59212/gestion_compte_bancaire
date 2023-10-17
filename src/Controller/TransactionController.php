@@ -108,4 +108,24 @@ class TransactionController extends AbstractController
 
         return new JsonResponse(['message' => "Virement non effectué"], Response::HTTP_BAD_REQUEST);
     }
+
+    #[Route('/api/transactions/saving', name: 'app_transactions_saving', methods: ['GET'])]
+    public function getAccountSaving(Request $request, BankAccountRepository $repository, SerializerInterface $serializer): JsonResponse
+    {
+        $content = $request->toArray();
+        $id = $content['idBankAccount'] ?? -1;
+        $account = $repository->find($id);
+
+        if ($account->getAccountType() === 'epargne') {
+            $currentBalance = $account->getCurrentAccountBalance();
+            $interestRate = $account->getInterestRate();
+
+            $saving = ($account->getCurrentAccountBalance() + ($currentBalance * $interestRate) / 100);
+            $savingAccount = $serializer->serialize($saving, 'json');
+            return new JsonResponse(['message'=> 'Epargne Validé, nouveau montant: ' .$savingAccount . "€"], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['message' => "Epargne non trouvé"], Response::HTTP_NOT_FOUND);
+    }
+
 }
