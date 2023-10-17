@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class TransactionController extends AbstractController
 {
-    #[Route('/api/transaction/deposit', name: 'app_transaction')]
+    #[Route('/api/transactions/deposit', name: 'app_transaction_deposit')]
     public function deposit(EntityManagerInterface $em, Request $request, SerializerInterface $serializer, BankAccountRepository $repository): JsonResponse
     {
         $content = $request->toArray();
@@ -36,7 +36,7 @@ class TransactionController extends AbstractController
                 $em->persist($deposit);
                 $em->flush();
 
-                $response = ['transaction' => $deposit, 'newAmount' => $newBalance];
+                $response = ['transaction' => $deposit, 'newAmount' => $newBalance . "€"];
 
                 return new JsonResponse($serializer->serialize($response, 'json', ['groups' => 'getTransactions']), Response::HTTP_OK, [], true);
             }
@@ -45,7 +45,7 @@ class TransactionController extends AbstractController
         return new JsonResponse(['message' => "deposit not found"], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/api/transaction/debit', name: 'app_transaction_debit')]
+    #[Route('/api/transactions/debit', name: 'app_transaction_debit')]
     public function debit(EntityManagerInterface $em, Request $request, SerializerInterface $serializer, BankAccountRepository $repository): JsonResponse
     {
         $content = $request->toArray();
@@ -67,12 +67,45 @@ class TransactionController extends AbstractController
                 $em->persist($debit);
                 $em->flush();
 
-                $response = ['transaction' => $debit, 'newAmount' => $newBalance];
+                $response = ['transaction' => $debit, 'newAmount' => $newBalance . "€"];
 
                 return new JsonResponse($serializer->serialize($response, 'json', ['groups' => 'getTransactions']), Response::HTTP_OK, [], true);
             }
         }
 
         return new JsonResponse(['message' => "debit not found"], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/api/transactions/payment', name: 'app_transaction_payment', methods: ['POST'])]
+    public function payment(EntityManagerInterface $em, Request $request, SerializerInterface $serializer, BankAccountRepository $repository): JsonResponse
+    {
+        $content = $request->toArray();
+        $bankAccountId = $content['idBankAccount'] ?? -1;
+        $account = $repository->find($bankAccountId);
+
+        if ($account) {
+            $newBalance = null;
+            $payment = $serializer->deserialize($request->getContent(), Transaction::class, 'json');
+
+            if ($payment->getAmount() > 0) {
+                $payment->setDate(new \DateTime());
+                $payment->setTypeTransaction('payment');
+                $payment->setBanckAccount($account);
+
+                $currentBalance = $account->getCurrentAccountBalance();
+                if ($currentBalance >= $payment->getAmount()){
+                    $newBalance = $currentBalance - $payment->getAmount();
+                    $account->setCurrentAccountBalance($newBalance);
+                    $em->persist($payment);
+                    $em->flush();
+                }
+
+                if ($newBalance !== null) {
+                    return new JsonResponse(['message' => "Virement effectué", 'newAmount' => $newBalance ."€"], Response::HTTP_OK);
+                }
+            }
+        }
+
+        return new JsonResponse(['message' => "Virement non effectué"], Response::HTTP_BAD_REQUEST);
     }
 }
