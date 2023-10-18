@@ -14,7 +14,7 @@ De plus, des fonctionnalités avancées telles que des virements, les relevés d
 - _Recherche de compte par le nom du titulaire._
 - _Implémentation de fonctionnalités de gestion des opérations courantes telles que les dépôts et les retraits._
 - _CRUD classique des entités_
-- Ajout du montant épargné (compte épargne)
+- _Ajout du montant épargné (compte épargne)_
 
 
 **Exigences techniques:**

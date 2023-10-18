@@ -74,12 +74,36 @@ class BankAccountController extends AbstractController
         return new JsonResponse(['message'=>'bank update'], Response::HTTP_OK);
     }
 
-    #[Route('api/bankAccount/searchCustomer/{name}', name: 'app_book_searchCustomer', methods: ['GET'])]
-    public function searchBankAccount(string $name, BankAccountRepository $repository, SerializerInterface $serializer):JsonResponse
+    #[Route('api/bank/searchByCustomerName', name: 'app_book_searchCustomer', methods: ['GET'])]
+    public function searchBankAccount(Request $request, BankAccountRepository $repository, SerializerInterface $serializer):JsonResponse
     {
-        $names = $repository->findName($name);
-        $jsonNames = $serializer->serialize($names, 'json', ['groups' => 'getCustomers']);
+        $name = $request->toArray();
+        $name = $name['name'] ?? "";
+        $bankAccounts = $repository->findAccountsByCustomerName($name);
+        $jsonBankAccounts = $serializer->serialize($bankAccounts, 'json', ['groups' => 'getCustomers']);
 
-        return new JsonResponse($jsonNames, Response::HTTP_OK, [], true);
+        return new JsonResponse($jsonBankAccounts, Response::HTTP_OK, [], true);
     }
+
+    #[Route('/api/bank/saving', name: 'app_bank_saving', methods: ['PUT'])]
+    public function getAccountSaving(Request $request, BankAccountRepository $repository,EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
+    {
+        $content = $request->toArray();
+        $id = $content['idBankAccount'] ?? -1;
+        $account = $repository->find($id);
+
+        if ($account->getAccountType() === 'epargne') {
+            $currentBalance = $account->getCurrentAccountBalance();
+            $interestRate = $account->getInterestRate();
+
+            $saving = ($currentBalance + ($currentBalance * $interestRate) / 100);
+            $savingAccount = $serializer->serialize($saving, 'json');
+            $account->setCurrentAccountBalance($saving);
+            $em->flush();
+            return new JsonResponse(['message'=> 'Epargne Validé, nouveau montant: ' .$savingAccount . "€"], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['message' => "Epargne non trouvé"], Response::HTTP_NOT_FOUND);
+    }
+
 }

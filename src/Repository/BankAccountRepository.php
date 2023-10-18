@@ -21,7 +21,7 @@ class BankAccountRepository extends ServiceEntityRepository
         parent::__construct($registry, BankAccount::class);
     }
 
-    public function findName(string $name): array
+    public function findAccountsByCustomerName(string $name): array
     {
         $em = $this->getEntityManager();
         $query= $em->createQuery(

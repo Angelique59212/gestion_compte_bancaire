@@ -14,3 +14,17 @@ P
  src/DataFixtures/AppFixtures.php,b/d/bd40e5504ff9d25586c516537316c24981df19f7
 J
 src/Entity/BankAccount.php,8/c/8c0adab644a4f0bb269e3e37ae3daaa8f3f85e8a
+U
+%src/Repository/CustomerRepository.php,8/8/88bf14d4b5991cd9a6b76fc20b7f92ca0e2a058e
+X
+(src/Repository/TransactionRepository.php,3/4/341fcee9e3b78ee9748579294e5179180dd7c1f2
+X
+(src/Controller/TransactionController.php,2/7/27ede46a9b2cac541645b5d733b41cb154d805d0
+J
+src/Entity/Transaction.php,4/9/49505d57dccfb75d3fd0da1ccfbf1f41e2c06f51
+X
+(src/Repository/BankAccountRepository.php,6/c/6c1639a341c9188223209f54fcf2bc47ba8ce1c8
+X
+(src/Controller/BankAccountController.php,a/5/a571c694950d9504d46984a28dee6cae8df19e8f
+U
+%src/Controller/CustomerController.php,8/a/8a388636e714aa9f073fed44dd1d6d19d949b7c1

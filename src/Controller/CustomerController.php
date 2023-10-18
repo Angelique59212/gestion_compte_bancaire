@@ -55,18 +55,23 @@ class CustomerController extends AbstractController
         if ($customer) {
             $em->remove($customer);
             $em->flush();
-            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+            return new JsonResponse(['message'=>'customer delete'], Response::HTTP_ACCEPTED);
         }
         return new JsonResponse(['message'=>'customer not found'], Response::HTTP_NOT_FOUND);
     }
 
     #[Route('/api/customer/{id}', name: 'app_customer_update', methods: ['PUT'])]
-    public function updateCustomer(Request $request, SerializerInterface $serializer, Customer $currentCustomer, EntityManagerInterface $em): JsonResponse
+    public function updateCustomer(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, Customer $currentCustomer = null): JsonResponse
     {
-        $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE=>$currentCustomer]);
+        if ($currentCustomer instanceof Customer) {
+            $updateCustomer = $serializer->deserialize($request->getContent(), Customer::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentCustomer]);
 
-        $em->persist($updateCustomer);
-        $em->flush();
-        return new JsonResponse(['message' =>'customer update'], Response::HTTP_OK);
+            $em->persist($updateCustomer);
+            $em->flush();
+            return new JsonResponse(['message' => 'customer update'], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['message' => 'customer not found'], Response::HTTP_NOT_FOUND);
+
     }
 }

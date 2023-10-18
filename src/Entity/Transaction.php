@@ -13,19 +13,19 @@ class Transaction
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getTransactions'])]
+    #[Groups(['getTransactions','getBanks'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['getTransactions'])]
+    #[Groups(['getTransactions','getBanks'])]
     private ?int $amount = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['getTransactions'])]
+    #[Groups(['getTransactions','getBanks'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 20)]
-    #[Groups(['getTransactions'])]
+    #[Groups(['getTransactions','getBanks'])]
     private ?string $typeTransaction = null;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]

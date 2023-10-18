@@ -43,6 +43,7 @@ class BankAccount
     private ?Customer $customer = null;
 
     #[ORM\OneToMany(mappedBy: 'banckAccount', targetEntity: Transaction::class)]
+    #[Groups(['getBanks'])]
     private Collection $transactions;
 
     public function __construct()
